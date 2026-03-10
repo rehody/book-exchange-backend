@@ -3,5 +3,27 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/prod_book_exchange
+      SPRING_DATASOURCE_USERNAME: prod_book_exchange
+      SPRING_DATASOURCE_PASSWORD: prod_book_exchange
+      JWT_SECRET: prod-book-exchange-jwt-secret-for-local-compose-please-change
     ports:
       - "8080:8080"
+
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: prod_book_exchange
+      POSTGRES_USER: prod_book_exchange
+      POSTGRES_PASSWORD: prod_book_exchange
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "prod_book_exchange", "-d", "prod_book_exchange" ]
+
+      interval: 2s
+      timeout: 3s
+      retries: 30
+      start_period: 2s
