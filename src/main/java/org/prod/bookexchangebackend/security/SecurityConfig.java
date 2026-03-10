@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
-                                "/internal/auth/**",
+                                "/api/auth/**",
                                 "/health",
                                 "/ready",
                                 "/actuator/health/**",

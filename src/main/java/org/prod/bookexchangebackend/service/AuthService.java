@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.prod.bookexchangebackend.dto.AuthenticatedUserResponse;
 import org.prod.bookexchangebackend.dto.LoginUserRequest;
 import org.prod.bookexchangebackend.dto.RegisterUserRequest;
+import org.prod.bookexchangebackend.enums.UserRole;
 import org.prod.bookexchangebackend.model.PlatformUser;
 import org.prod.bookexchangebackend.security.JwtService;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,7 +32,7 @@ public class AuthService {
                 request.phoneNumber(),
                 request.location(),
                 request.bio(),
-                List.of(),
+                List.of(UserRole.READER),
                 true);
     }
 
