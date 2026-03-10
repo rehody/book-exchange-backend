@@ -1,7 +1,6 @@
 package org.prod.bookexchangebackend.service;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.prod.bookexchangebackend.dto.AuthenticatedUserResponse;
@@ -22,6 +21,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+    // в будущем следует перенести в отдельный маппер
     private static PlatformUser mapRegisterToUser(UUID id, String encodedPassword, RegisterUserRequest request) {
         return new PlatformUser(
                 id,
@@ -32,12 +32,19 @@ public class AuthService {
                 request.phoneNumber(),
                 request.location(),
                 request.bio(),
-                List.of(UserRole.READER),
+                request.roles(),
                 true);
+    }
+
+    private static void restrictAdminRegistration(RegisterUserRequest request) {
+        if (request.roles().contains(UserRole.ADMIN)) {
+            throw new IllegalArgumentException("You cannot register an administrative user");
+        }
     }
 
     public AuthenticatedUserResponse register(RegisterUserRequest request) {
         ensureUserNotExists(request);
+        restrictAdminRegistration(request);
 
         PlatformUser user = mapRegisterToUser(UUID.randomUUID(), passwordEncoder.encode(request.password()), request);
 
